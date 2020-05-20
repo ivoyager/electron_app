@@ -1,0 +1,22 @@
+{
+  "name": "electron_app",
+  "version": "0.0.6-alpha",
+  "description": "I, Voyager Planetarium",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivoyager/electron_app.git"
+  },
+  "author": "Charlie Whitfield",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ivoyager/ivoyager-bugs/issues"
+  },
+  "homepage": "https://ivoyager.dev",
+  "devDependencies": {
+    "electron": "^9.0.0"
+  }
+}

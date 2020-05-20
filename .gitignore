@@ -1,0 +1,8 @@
+
+# Electron installation
+node_modules/
+
+# Godot HTML5 project export
+planetarium*
+index.html
+favicon.png
