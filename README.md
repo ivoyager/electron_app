@@ -5,7 +5,7 @@ See Electron docs [here](https://www.electronjs.org/docs).
 
 TODO:
 * Start fullscreen, remove File/Edit/View/Window/Help header.
-* Improvements, e.g., macOS dock functionality as described [here](https://www.electronjs.org/docs/tutorial/first-app#electron-development-in-a-nutshell).
+* Hookup openDevTools() to keyboard shortcut cntr-shift-I.
 * Bring browser window to front when link clicked (or tabbed window?)
 * Whitelist allowed websites: wikipedia.org, nasa.gov, etc.
 * Deploy to Windows, Mac & Linux using [electron-forge](https://www.electronjs.org/docs/tutorial/boilerplates-and-clis#electron-forge) (I think).
@@ -22,5 +22,3 @@ TODO:
 `npm start`
 ## Deploy
 We'll probably use [electron-forge](https://www.electronjs.org/docs/tutorial/boilerplates-and-clis#electron-forge). I don't know how to do this yet. 
-
-
