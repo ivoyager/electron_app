@@ -3,6 +3,12 @@ Wrapper for running Planetarium HTML5 export as a desktop app (experimental).
 
 This may be a dumb idea, but what I'm doing here is having Electron (basically, a Chromium web browser) run the Planetarium (as an HTML5 export). It works. It may be a better idea to have the Planetarium (native export for platform) run the browser. The 2nd option seems better but I'm not sure.
 
+Browser runs Planetarium (versus the reverse):
+* Pro: Only 1 "Engine" (WebKit) running both systems. (I don't know if this is real performance advantage.)
+* Con: Stuck with HTML5 rather than native Planetarium:
+    * This may (or may not) negate above advantage.
+    * Stuck with WebGL.
+
 See Electron docs [here](https://www.electronjs.org/docs).
 
 TODO:
