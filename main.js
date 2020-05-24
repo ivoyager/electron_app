@@ -16,10 +16,9 @@
 // limitations under the License.
 // *****************************************************************************
 
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 
-function createWindow () {
-  // Create the browser window.
+function createWindow() {
   let win = new BrowserWindow({
     width: 1200,
     height: 900,
@@ -28,19 +27,26 @@ function createWindow () {
     }
   })
 
-  // and load the index.html of the app.
   win.loadFile('planetarium_app.html')
-
-  // Open the DevTools.
   win.webContents.openDevTools()
+
+  win.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+    console.log("Opening " + url)
+    event.preventDefault()
+    child = new BrowserWindow({ parent: win, modal: true, show: false })
+    child.loadURL(url)
+    child.once('ready-to-show', () => {
+      child.show()
+    })
+    event.newGuest = child
+  })
+
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+Menu.setApplicationMenu(false)
+
 app.whenReady().then(createWindow)
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
