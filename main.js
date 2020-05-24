@@ -18,10 +18,30 @@
 
 const { app, BrowserWindow, Menu } = require('electron')
 
+const VERBOSE = false
+const WHITELIST = [
+  /^https:\/\/[\w\.]*wikipedia\.org[\/$]/,
+  /^https:\/\/\w+\.wikimedia\.org[^\/]/,
+  /^https:\/\/\w+\.wikisource\.org[^\/]/,
+  /^https:\/\/\w+\.wikimediafoundation\.org[^\/]/,
+  /^https:\/\/[\w\.]*nasa\.gov[^\/]/,
+  /^https:\/\/ivoyager\.dev[\/$]/,
+]
+
+let whitelist = [] // regex formated
+
+function testWhitelist(url) {
+  for (let allowed of WHITELIST) {
+    if (url.match(allowed)) return true;
+  }
+  console.log("BLOCKED (add to whitelist?): " + url)
+  return false
+}
+
 function createWindow() {
   let win = new BrowserWindow({
-    width: 1200,
-    height: 900,
+    width: 1000,
+    height: 800,
     webPreferences: {
       nodeIntegration: true
     }
@@ -31,16 +51,29 @@ function createWindow() {
   win.webContents.openDevTools()
 
   win.webContents.on('new-window', (event, url, frameName, disposition, options) => {
-    console.log("Opening " + url)
+    if (VERBOSE) console.log("Attempting to open " + url)
     event.preventDefault()
-    child = new BrowserWindow({ parent: win, modal: true, show: false })
-    child.loadURL(url)
-    child.once('ready-to-show', () => {
-      child.show()
+    if (!testWhitelist(url)) return
+    let brwsr = new BrowserWindow({ parent: win, modal: true, show: false })
+    brwsr.loadURL(url)
+    brwsr.once('ready-to-show', () => {
+      brwsr.show()
     })
-    event.newGuest = child
-  })
+    event.newGuest = brwsr
 
+    brwsr.webContents.on('will-navigate', (event, url) =>{
+      if (VERBOSE) console.log("Attempting to navigate " + url)
+      if (testWhitelist(url)) return // allow
+      event.preventDefault()
+    })
+
+    brwsr.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+      if (VERBOSE) console.log("brwsr attempting open; attempt load instead " + url)
+      event.preventDefault()
+      if (!testWhitelist(url)) return
+      brwsr.loadURL(url)
+    })
+  })
 }
 
 Menu.setApplicationMenu(false)
