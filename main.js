@@ -16,7 +16,7 @@
 // limitations under the License.
 // *****************************************************************************
 
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, shell } = require('electron')
 
 const VERBOSE = false
 const WHITELIST = [
@@ -28,6 +28,10 @@ const WHITELIST = [
   "nasa.gov",
   "github.com",
   "ivoyager.dev",
+]
+const EXTERNAL_URLS = [
+  // open in the user's default browser
+  "https://github.com/sponsors/charliewhitfield",
 ]
 
 function testWhitelist(url) {
@@ -42,10 +46,20 @@ function testWhitelist(url) {
   return false
 }
 
+function shellOpen(url) {
+  for (let externalURL of EXTERNAL_URLS) {
+    if (externalURL == url) {
+      shell.openExternal(externalURL)
+      return true
+    }
+  }
+  return false
+}
+
 function createWindow() {
   
   let win = new BrowserWindow({
-    width: 1000,
+    width: 1200,
     height: 800,
     webPreferences: {
       nodeIntegration: true
@@ -58,7 +72,9 @@ function createWindow() {
   win.webContents.on('new-window', (event, url, frameName, disposition, options) => {
     if (VERBOSE) console.log("Attempting to open " + url)
     event.preventDefault()
-    if (!testWhitelist(url)) return
+    if (!testWhitelist(url) || shellOpen(url)) {
+      return
+    }
     let brwsr = new BrowserWindow({ parent: win, modal: true, show: false })
     brwsr.loadURL(url)
     brwsr.once('ready-to-show', () => {
@@ -68,14 +84,17 @@ function createWindow() {
 
     brwsr.webContents.on('will-navigate', (event, url) =>{
       if (VERBOSE) console.log("Attempting to navigate " + url)
-      if (testWhitelist(url)) return // allow
-      event.preventDefault()
+      if (!testWhitelist(url) || shellOpen(url)) {
+        event.preventDefault()
+      }
     })
 
     brwsr.webContents.on('new-window', (event, url, frameName, disposition, options) => {
       if (VERBOSE) console.log("brwsr attempting open; attempt load instead " + url)
       event.preventDefault()
-      if (!testWhitelist(url)) return
+      if (!testWhitelist(url) || shellOpen(url)) {
+        return
+      }
       brwsr.loadURL(url)
     })
   })
