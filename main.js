@@ -20,25 +20,30 @@ const { app, BrowserWindow, Menu } = require('electron')
 
 const VERBOSE = false
 const WHITELIST = [
-  /^https:\/\/[\w\.]*wikipedia\.org[\/$]/,
-  /^https:\/\/\w+\.wikimedia\.org[^\/]/,
-  /^https:\/\/\w+\.wikisource\.org[^\/]/,
-  /^https:\/\/\w+\.wikimediafoundation\.org[^\/]/,
-  /^https:\/\/[\w\.]*nasa\.gov[^\/]/,
-  /^https:\/\/ivoyager\.dev[\/$]/,
+  // subdomains are allowed
+  "wikipedia.org",
+  "wikimedia.org",
+  "wikisource.org",
+  "wikimediafoundation.org",
+  "nasa.gov",
+  "github.com",
+  "ivoyager.dev",
 ]
 
-let whitelist = [] // regex formated
-
 function testWhitelist(url) {
-  for (let allowed of WHITELIST) {
-    if (url.match(allowed)) return true;
+  let urlObj = new URL(url)
+  let hostname = urlObj.hostname
+  let matchDomain = hostname.match(/\w+\.\w+$/)
+  let testHost = matchDomain[0] // removed subdomains
+  for (let safeHost of WHITELIST) {
+    if (testHost == safeHost) return true;
   }
   console.log("BLOCKED (add to whitelist?): " + url)
   return false
 }
 
 function createWindow() {
+  
   let win = new BrowserWindow({
     width: 1000,
     height: 800,
