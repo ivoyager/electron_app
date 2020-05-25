@@ -16,31 +16,75 @@
 // limitations under the License.
 // *****************************************************************************
 
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 
-function createWindow () {
-  // Create the browser window.
+const VERBOSE = false
+const WHITELIST = [
+  // subdomains are allowed
+  "wikipedia.org",
+  "wikimedia.org",
+  "wikisource.org",
+  "wikimediafoundation.org",
+  "nasa.gov",
+  "github.com",
+  "ivoyager.dev",
+]
+
+function testWhitelist(url) {
+  let urlObj = new URL(url)
+  let hostname = urlObj.hostname
+  let matchDomain = hostname.match(/\w+\.\w+$/)
+  let testHost = matchDomain[0] // removed subdomains
+  for (let safeHost of WHITELIST) {
+    if (testHost == safeHost) return true;
+  }
+  console.log("BLOCKED (add to whitelist?): " + url)
+  return false
+}
+
+function createWindow() {
+  
   let win = new BrowserWindow({
-    width: 1200,
-    height: 900,
+    width: 1000,
+    height: 800,
     webPreferences: {
       nodeIntegration: true
     }
   })
 
-  // and load the index.html of the app.
   win.loadFile('planetarium_app.html')
-
-  // Open the DevTools.
   win.webContents.openDevTools()
+
+  win.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+    if (VERBOSE) console.log("Attempting to open " + url)
+    event.preventDefault()
+    if (!testWhitelist(url)) return
+    let brwsr = new BrowserWindow({ parent: win, modal: true, show: false })
+    brwsr.loadURL(url)
+    brwsr.once('ready-to-show', () => {
+      brwsr.show()
+    })
+    event.newGuest = brwsr
+
+    brwsr.webContents.on('will-navigate', (event, url) =>{
+      if (VERBOSE) console.log("Attempting to navigate " + url)
+      if (testWhitelist(url)) return // allow
+      event.preventDefault()
+    })
+
+    brwsr.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+      if (VERBOSE) console.log("brwsr attempting open; attempt load instead " + url)
+      event.preventDefault()
+      if (!testWhitelist(url)) return
+      brwsr.loadURL(url)
+    })
+  })
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+Menu.setApplicationMenu(false)
+
 app.whenReady().then(createWindow)
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
