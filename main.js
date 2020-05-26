@@ -59,15 +59,20 @@ function shellOpen(url) {
 function createWindow() {
   
   let win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1000,
+    height: 600,
     webPreferences: {
       nodeIntegration: true
     }
   })
 
   win.loadFile('planetarium_app.html')
-  win.webContents.openDevTools()
+  
+  win.webContents.on('before-input-event', (event, input) => {
+    if (input.code == "KeyI" && input.shift && input.control && input.type == "keyDown") {
+      win.webContents.openDevTools()
+    }
+  })
 
   win.webContents.on('new-window', (event, url, frameName, disposition, options) => {
     if (VERBOSE) console.log("Attempting to open " + url)
