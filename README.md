@@ -6,10 +6,10 @@ This may be a dumb idea, but what I'm doing here is having Electron (basically, 
 See Electron docs [here](https://www.electronjs.org/docs).
 
 TODO:
-* Start fullscreen, remove File/Edit/View/Window/Help header.
-* Hookup openDevTools() to keyboard shortcut cntr-shift-I.
-* Bring browser window to front when link clicked (or tabbed window?)
-* Whitelist allowed websites: wikipedia.org, nasa.gov, etc.
+* Start fullscreen, ~~remove File/Edit/View/Window/Help header~~.
+* ~~Hookup openDevTools() to keyboard shortcut cntr-shift-I.~~
+* ~~Bring browser window to front when link clicked (or tabbed window?)~~
+* ~~Whitelist allowed websites: wikipedia.org, nasa.gov, etc.~~
 * Deploy to Windows, Mac & Linux using [electron-forge](https://www.electronjs.org/docs/tutorial/boilerplates-and-clis#electron-forge) (I think).
 
 ## Electron setup & intallation
