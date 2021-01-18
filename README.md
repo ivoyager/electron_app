@@ -1,4 +1,7 @@
 # electron_app
+
+**DEPRECIATE!!! This was an interesting excercise but kind of a dumb idea. The repository will go away at some point in the future.**
+
 Wrapper for running Planetarium HTML5 export as a desktop app (experimental).
 
 This may be a dumb idea, but what I'm doing here is having Electron (basically, a Chromium web browser) run the Planetarium (as an HTML5 export). It works. It may be a better idea to have the Planetarium (native export for platform) run the browser. The 2nd option seems better but I'm not sure. Or 3rd option, have browser run Planetarium, but (somehow) as its native export.
